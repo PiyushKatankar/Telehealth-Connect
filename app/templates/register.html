@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Sign up — TeleHealth Connect{% endblock %}
+
+{% block content %}
+<div class="auth-card card">
+  <h2>Create your account</h2>
+  <form id="registerForm" novalidate>
+    <label>I am a…</label>
+    <div class="role-toggle">
+      <label class="radio-pill">
+        <input type="radio" name="role" value="patient" checked>
+        <span>Patient</span>
+      </label>
+      <label class="radio-pill">
+        <input type="radio" name="role" value="doctor">
+        <span>Doctor</span>
+      </label>
+    </div>
+
+    <label for="fullName">Full name</label>
+    <input type="text" id="fullName" name="full_name" required maxlength="120"
+           placeholder="Jane Doe">
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required autocomplete="email"
+           placeholder="jane@example.com">
+
+    <label for="password">Password <span class="muted">(min 8 characters)</span></label>
+    <input type="password" id="password" name="password" required minlength="8"
+           autocomplete="new-password" placeholder="••••••••">
+
+    <div id="doctorFields" hidden>
+      <label for="specialty">Specialty <span class="muted">(doctors)</span></label>
+      <input type="text" id="specialty" name="specialty" maxlength="120"
+             placeholder="e.g. Cardiology">
+      <label for="bio">Short bio</label>
+      <textarea id="bio" name="bio" rows="3" maxlength="600"
+                placeholder="Tell patients about your practice"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block">Create account</button>
+    <p id="registerError" class="form-error" hidden></p>
+    <p class="form-hint">Already registered? <a href="{{ url_for('auth.login_page') }}">Log in</a></p>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
+{% endblock %}

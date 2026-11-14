@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Log in — TeleHealth Connect{% endblock %}
+
+{% block content %}
+<div class="auth-card card">
+  <h2>Welcome back</h2>
+  <form id="loginForm" novalidate>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required autocomplete="email"
+           placeholder="patient@clinic.test">
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required autocomplete="current-password"
+           placeholder="••••••••">
+
+    <button type="submit" class="btn btn-primary btn-block">Log in</button>
+    <p id="loginError" class="form-error" hidden></p>
+    <p class="form-hint">
+      No account yet? <a href="{{ url_for('auth.register_page') }}">Sign up</a>
+      · Demo: <code>patient@clinic.test</code> / <code>Patient#123</code>
+    </p>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
+{% endblock %}

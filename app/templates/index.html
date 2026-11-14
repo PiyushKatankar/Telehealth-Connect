@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}TeleHealth Connect — book doctors, in real time{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>Book a doctor, <span class="accent">in real time</span>.</h1>
+  <p class="hero-sub">
+    Live appointment availability, transaction-safe booking (no double-booking,
+    ever) and a symptom chat with your doctor the moment your slot is confirmed.
+  </p>
+  <div class="hero-actions">
+    <a class="btn btn-primary btn-lg" href="{{ url_for('main.booking_page') }}">Find a doctor</a>
+    {% if not current_user.is_authenticated %}
+      <a class="btn btn-ghost btn-lg" href="{{ url_for('auth.register_page') }}">Create an account</a>
+    {% endif %}
+  </div>
+</section>
+
+<section class="features">
+  <article class="card feature">
+    <h3>Live slot availability</h3>
+    <p>Slots update over WebSocket the instant someone books — no refresh, no stale calendars, no race conditions.</p>
+  </article>
+  <article class="card feature">
+    <h3>Transaction-safe booking</h3>
+    <p>Bookings run inside a SQL transaction with row-level locking plus a database constraint, so a slot can only ever be claimed once.</p>
+  </article>
+  <article class="card feature">
+    <h3>Symptom chat</h3>
+    <p>After booking, chat directly with the doctor in a private room so symptoms are documented before the visit starts.</p>
+  </article>
+  <article class="card feature">
+    <h3>Role-based access</h3>
+    <p>Patients book and message; doctors publish availability and manage their schedule. Permissions are enforced server-side.</p>
+  </article>
+</section>
+
+<section class="card doctors-panel">
+  <h2>Our doctors</h2>
+  <div id="doctorList" class="doctor-grid">
+    <p class="muted">Loading doctors…</p>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}

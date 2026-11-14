@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Book a doctor — TeleHealth Connect{% endblock %}
+
+{% block content %}
+<h1>Book an appointment</h1>
+<p class="muted">Pick a doctor, choose any open slot and describe your symptoms.
+Availability updates live — if someone books a slot while you're choosing, it disappears instantly.</p>
+
+<div class="booking-layout">
+  <aside class="card">
+    <h2>1 · Choose a doctor</h2>
+    <div id="doctorList" class="doctor-list">
+      <p class="muted">Loading doctors…</p>
+    </div>
+  </aside>
+
+  <section class="card">
+    <h2>2 · Choose a slot</h2>
+    <div id="slotArea">
+      <p class="muted" id="slotHint">Select a doctor to see their availability.</p>
+    </div>
+
+    <h2>3 · Describe your symptoms</h2>
+    <textarea id="symptoms" rows="4" maxlength="2000"
+              placeholder="What should the doctor know before the visit? (optional)"></textarea>
+
+    <div class="booking-actions">
+      <button id="bookBtn" class="btn btn-primary" disabled>Book selected slot</button>
+      <span id="bookingStatus" class="muted"></span>
+    </div>
+
+    <div id="bookingResult" class="booking-result" hidden>
+      <h3>Appointment confirmed 🎉</h3>
+      <p id="bookingResultText"></p>
+      <div class="hero-actions">
+        <a id="chatLink" class="btn btn-primary" href="#">Chat with the doctor</a>
+        <a class="btn btn-ghost" href="{{ url_for('main.dashboard') }}">Go to dashboard</a>
+      </div>
+    </div>
+
+    <div id="loginNotice" class="notice" hidden>
+      <p>Please <a href="{{ url_for('auth.login_page', next='/booking') }}">log in</a>
+      or <a href="{{ url_for('auth.register_page') }}">create an account</a> to book.</p>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+<script src="{{ url_for('static', filename='js/booking.js') }}"></script>
+{% endblock %}

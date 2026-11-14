@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Chat — TeleHealth Connect{% endblock %}
+
+{% block body_attrs %}data-appointment-id="{{ appointment.id }}"{% endblock %}
+
+{% block content %}
+<div class="chat-head">
+  <div>
+    <h1>Appointment chat</h1>
+    <p class="muted" id="chatSubtitle">
+      {{ appointment.patient.full_name }} ↔ Dr.-side: {{ appointment.doctor.full_name }}
+      · slot {{ appointment.slot.start_time.isoformat() if appointment.slot else "—" }} UTC
+    </p>
+  </div>
+  <span id="appointmentStatus" class="badge">{{ appointment.status }}</span>
+</div>
+
+<div class="card chat-card">
+  <div id="messages" class="messages" aria-live="polite"></div>
+  <form id="chatForm" class="chat-form">
+    <input type="text" id="chatInput" maxlength="2000" autocomplete="off"
+           placeholder="Describe your symptoms or ask a question…">
+    <button type="submit" class="btn btn-primary">Send</button>
+  </form>
+  <p id="chatNotice" class="muted"></p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}
