@@ -54,7 +54,7 @@ def api_register():
     if role not in User.ROLES:
         errors.append("Role must be 'patient' or 'doctor'.")
     if role == User.ROLE_DOCTOR and not specialty:
-        errors.append("Doctors must provide a specialty.")
+        errors.append("Doctor accounts must include a specialty (e.g. Cardiology).")
     if errors:
         return jsonify(error="; ".join(errors)), 400
 

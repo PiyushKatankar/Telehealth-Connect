@@ -24,7 +24,9 @@ def test_register_doctor_without_specialty_fails(client):
         "role": "doctor",
     })
     assert resp.status_code == 400
-    assert "specialty" in resp.get_json()["error"]
+    error = resp.get_json()["error"]
+    assert "specialty" in error
+    assert "Cardiology" in error  # the message shows an example to type
 
 
 def test_duplicate_email_is_rejected(client):

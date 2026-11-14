@@ -58,10 +58,11 @@
                autocomplete="new-password" placeholder="••••••••">
 
         <div id="doctorFields" hidden>
-          <label for="specialty">Specialty <span class="lbl-muted">(doctors)</span></label>
+          <label for="specialty">Specialty <span class="lbl-req">required</span></label>
           <input type="text" id="specialty" name="specialty" maxlength="120"
                  placeholder="e.g. Cardiology">
-          <label for="bio">Short bio</label>
+          <p class="form-hint field-hint">Shown in the doctor directory so patients can find you.</p>
+          <label for="bio">Short bio <span class="lbl-muted">(optional)</span></label>
           <textarea id="bio" name="bio" rows="3" maxlength="600"
                     placeholder="Tell patients about your practice"></textarea>
         </div>

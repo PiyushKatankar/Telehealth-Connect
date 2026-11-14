@@ -4,13 +4,22 @@
 const form = document.getElementById("registerForm");
 const doctorFields = document.getElementById("doctorFields");
 const errorBox = document.getElementById("registerError");
+const specialtyInput = document.getElementById("specialty");
 
-/* Show/hide clinical fields based on the selected role. */
+/* Show/hide the clinical fields based on the selected role. */
+function syncDoctorFields() {
+  const checked = form.querySelector('input[name="role"]:checked');
+  doctorFields.hidden = !checked || checked.value !== "doctor";
+}
+
 form.addEventListener("change", (ev) => {
-  if (ev.target.name === "role") {
-    doctorFields.hidden = ev.target.value !== "doctor";
-  }
+  if (ev.target.name === "role") syncDoctorFields();
 });
+
+/* Browsers restore previously-checked radios on back/forward navigation
+   WITHOUT firing a change event — sync once on load so a restored
+   "Doctor" role always shows the specialty fields. */
+syncDoctorFields();
 
 form.addEventListener("submit", async (ev) => {
   ev.preventDefault();
@@ -24,8 +33,14 @@ form.addEventListener("submit", async (ev) => {
     password: document.getElementById("password").value,
   };
   if (role === "doctor") {
-    payload.specialty = document.getElementById("specialty").value;
+    payload.specialty = specialtyInput.value;
     payload.bio = document.getElementById("bio").value;
+    if (!payload.specialty.trim()) {
+      doctorFields.hidden = false; // never leave a required field invisible
+      specialtyInput.focus();
+      showError(errorBox, "Specialty is required for doctor accounts — e.g. Cardiology, Pediatrics.");
+      return;
+    }
   }
 
   const reg = await api("/api/auth/register", { method: "POST", body: payload });
