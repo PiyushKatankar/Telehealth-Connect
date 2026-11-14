@@ -793,6 +793,29 @@ textarea { resize: vertical; min-height: 6rem; }
   margin: 1.2rem 0 0.55rem;
 }
 .slot-day:first-child .slot-day-title { margin-top: 0; }
+.slot-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.1rem;
+}
+.slot-filter {
+  padding: 0.38rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  cursor: pointer;
+  font: 600 0.82rem/1.1 var(--font-body);
+  color: var(--ink-muted);
+  transition: all 0.12s ease;
+}
+.slot-filter:hover { border-color: var(--brand-500); color: var(--brand-700); background: var(--brand-50); }
+.slot-filter.active {
+  background: var(--grad-brand);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(13, 138, 120, 0.28);
+}
 .slot-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .slot-btn {
   padding: 0.52rem 0.9rem;
@@ -949,6 +972,30 @@ textarea { resize: vertical; min-height: 6rem; }
 .chat-form { display: flex; gap: 0.6rem; }
 .chat-form input { flex: 1; border-radius: 999px; padding: 0.72rem 1.15rem; }
 .chat-notice { color: var(--ink-muted); font-size: 0.82rem; margin: 0.5rem 0 0; }
+
+/* ---------- error page ---------- */
+.error-shell {
+  max-width: 520px;
+  margin: 4rem auto 2rem;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 3rem 2.4rem 2.8rem;
+}
+.error-code {
+  display: inline-block;
+  font: 800 3rem/1 var(--font-display);
+  letter-spacing: -0.03em;
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 0.6rem;
+}
+.error-shell h1 { font-size: 1.5rem; margin-bottom: 0.4rem; }
+.error-shell p { margin-bottom: 1.5rem; }
 
 /* ---------- empty states ---------- */
 .empty {

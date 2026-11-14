@@ -14,6 +14,20 @@ from doctors on every endpoint.
 
 > ⚠️ Demo/portfolio project — not for real clinical use.
 
+## Screenshots
+
+| Landing | Booking (live slots + day filter) |
+| --- | --- |
+| ![Landing page](docs/screenshots/landing.png) | ![Booking page](docs/screenshots/booking.png) |
+
+| Dashboard | Symptom chat |
+| --- | --- |
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Chat](docs/screenshots/chat.png) |
+
+| Log in | 404 |
+| --- | --- |
+| ![Login](docs/screenshots/login.png) | ![404](docs/screenshots/error-404.png) |
+
 ## Features
 
 - **Real-time slot availability** — every booking (and cancellation) is
@@ -30,6 +44,10 @@ from doctors on every endpoint.
   server-side with decorators.
 - **Doctor directory + availability management** — doctors add/remove time
   windows from their dashboard; patients browse by specialty.
+- **Day filter on the booking grid** — when a doctor offers slots across
+  several days, patients can jump to a day with one click.
+- **Branded error pages** — 403/404/500 render the site's own error screen
+  for page visits, while API routes still return JSON errors.
 
 ## Tech stack
 
@@ -69,21 +87,57 @@ COMMIT;
 `tests/test_concurrency.py` fires 5 parallel booking requests at one slot and
 asserts exactly one `201`, four `409`s, and a single row in the database.
 
-## Quick start (SQLite, ~2 minutes)
+## Run it locally (SQLite, ~2 minutes)
+
+**Prerequisites:** Python 3.10+ only — no database server needed for the quick
+start (SQLite is created automatically in `instance/`).
+
+1. **Clone and enter the project**
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/telehealth-connect.git
+   cd telehealth-connect
+   ```
+
+2. **Create a virtual environment**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate        # macOS / Linux
+   # .venv\Scripts\activate         # Windows (cmd)  —  .venv\Scripts\Activate.ps1 (PowerShell)
+   ```
+
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Create the database + demo data**
+   ```bash
+   python seed.py                   # tables, 3 demo doctors, a week of slots, 1 patient
+   ```
+
+5. **Start the dev server**
+   ```bash
+   python run.py                    # → http://127.0.0.1:5000
+   ```
+
+6. **Try it** — log in as `patient@clinic.test` / `Patient#123`, book a slot,
+   then open a second private window logged in as
+   `doctor.aisha@clinic.test` / `Doctor#123` and watch both calendars update
+   live.
+
+No `.env` file is needed for the quick start. If you already have a
+`DATABASE_URL` exported in your shell (or a parent-directory `.env`), make
+sure it points at a valid SQLAlchemy URL — otherwise override it explicitly:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/telehealth-connect.git
-cd telehealth-connect
-
-python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-
-python seed.py                   # creates tables + demo doctors/slots
-python run.py                    # http://127.0.0.1:5000
+DATABASE_URL="sqlite:///$(pwd)/instance/telehealth.db" python seed.py
+DATABASE_URL="sqlite:///$(pwd)/instance/telehealth.db" python run.py
 ```
 
-No `.env` needed for the quick start — SQLite lives in `instance/`.
+To run against **real PostgreSQL** instead, set `DATABASE_URL` to something
+like `postgresql+psycopg2://user:password@localhost:5432/telehealth`, run
+`python seed.py` once, then `python run.py`. Or use the one-command Docker
+version below.
 
 ### Demo accounts
 
@@ -96,6 +150,25 @@ No `.env` needed for the quick start — SQLite lives in `instance/`.
 
 Open two browser windows (one logged in as a patient, one as a doctor) and
 watch the booking/slot lists update live.
+
+## Publish to GitHub
+
+The repo is a normal git repository (clean history, no secrets, no databases
+committed — `.gitignore` covers `instance/`, `*.db` and `.env`). To put it on
+GitHub:
+
+1. Create an **empty repository** on github.com named `telehealth-connect`
+   (no README/license — they already exist here).
+2. Add the remote and push:
+   ```bash
+   git remote add origin git@github.com:YOUR_USERNAME/telehealth-connect.git
+   git branch -M main
+   git push -u origin main
+   ```
+3. Update the badge URLs at the top of this README (replace `YOUR_USERNAME`
+   with your GitHub username).
+4. CI (`.github/workflows/ci.yml`) runs pytest on Python 3.10–3.12 on every
+   push — no extra setup needed.
 
 ## Quick start (PostgreSQL + Docker)
 

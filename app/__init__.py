@@ -2,7 +2,7 @@
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 from werkzeug.exceptions import HTTPException
 
 load_dotenv()
@@ -61,10 +61,23 @@ def create_app(config_name: str | None = None) -> Flask:
     app.register_blueprint(chat_bp)
 
     # --- error handlers -------------------------------------------------
+    # Branded HTML error pages for the common client-facing codes. Narrowly
+    # scoped so framework-internal HTTPExceptions (redirects = 301/302/308,
+    # method mismatches, …) keep their default behavior.
+    HTTP_ERROR_PAGES = {
+        403: ("Not allowed", "You do not have permission to view this page."),
+        404: ("Page not found", "The page you are looking for does not exist or was moved."),
+        500: ("Something went wrong", "An unexpected error occurred on our side. Please try again."),
+    }
+
     @app.errorhandler(HTTPException)
     def handle_http_exception(exc: HTTPException):
         if _is_api_request():
             return jsonify(error=exc.description), exc.code
+        title_desc = HTTP_ERROR_PAGES.get(exc.code)
+        if title_desc and request.method in ("GET", "HEAD"):
+            return render_template("error.html", code=exc.code, title=title_desc[0],
+                                   description=title_desc[1]), exc.code
         return exc
 
     @app.errorhandler(Exception)
@@ -74,7 +87,11 @@ def create_app(config_name: str | None = None) -> Flask:
         if _is_api_request():
             db.session.rollback()
             return jsonify(error="Internal server error."), 500
-        raise exc
+        if not app.debug:
+            title_desc = HTTP_ERROR_PAGES[500]
+            return render_template("error.html", code=500, title=title_desc[0],
+                                   description=title_desc[1]), 500
+        raise exc  # keep the interactive debugger in development
 
     @app.teardown_appcontext
     def _remove_session(_exc):

@@ -4,6 +4,7 @@
 const socket = io();
 let selectedDoctor = null; // user id of the doctor
 let selectedSlot = null; // slot object currently selected
+let slotDayFilter = "all"; // "all" or a day key (toDateString) chosen in the filter bar
 const openSlots = new Map(); // slot id -> slot object (open slots of selected doctor)
 
 const doctorList = document.getElementById("doctorList");
@@ -74,6 +75,14 @@ async function loadSlots() {
   renderSlots();
 }
 
+function dayLabel(dayKey) {
+  return new Date(dayKey).toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+}
+
 function renderSlots() {
   if (!selectedDoctor) {
     slotArea.replaceChildren(emptyState("Select a doctor to see their availability.", { compact: true }));
@@ -94,9 +103,34 @@ function renderSlots() {
   });
 
   const frag = document.createDocumentFragment();
+
+  // Day filter bar — only worth showing when availability spans 2+ days.
+  if (byDay.size > 1) {
+    if (slotDayFilter !== "all" && !byDay.has(slotDayFilter)) slotDayFilter = "all";
+    const bar = el("div", "slot-filters");
+    const allBtn = el("button", `slot-filter${slotDayFilter === "all" ? " active" : ""}`, "All days");
+    allBtn.type = "button";
+    allBtn.addEventListener("click", () => {
+      slotDayFilter = "all";
+      renderSlots();
+    });
+    bar.append(allBtn);
+    byDay.forEach((_slots, dayKey) => {
+      const chip = el("button", `slot-filter${slotDayFilter === dayKey ? " active" : ""}`, dayLabel(dayKey));
+      chip.type = "button";
+      chip.addEventListener("click", () => {
+        slotDayFilter = dayKey;
+        renderSlots();
+      });
+      bar.append(chip);
+    });
+    frag.append(bar);
+  }
+
   byDay.forEach((slots, dayKey) => {
+    if (byDay.size > 1 && slotDayFilter !== "all" && dayKey !== slotDayFilter) return;
     const section = el("div", "slot-day");
-    section.append(el("h3", "slot-day-title", dayKey));
+    section.append(el("h3", "slot-day-title", dayLabel(dayKey)));
     const grid = el("div", "slot-grid");
     slots
       .sort((a, b) => a.start_time.localeCompare(b.start_time))
