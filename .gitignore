@@ -1,0 +1,32 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local databases (SQLite quick-start file lives here)
+instance/
+*.db
+*.sqlite3
+
+# Environment / secrets
+.env
+
+# Test / coverage artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Tooling
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+
+# Editors
+.idea/
+.vscode/
