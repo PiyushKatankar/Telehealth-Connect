@@ -2,37 +2,59 @@
 {% block title %}Dashboard — TeleHealth Connect{% endblock %}
 
 {% block content %}
-<div class="dashboard-head">
-  <h1 id="welcomeTitle">Dashboard</h1>
-  <a class="btn btn-primary" href="{{ url_for('main.booking_page') }}">Book a new appointment</a>
-</div>
-
-<section class="card">
-  <h2>My appointments</h2>
-  <div id="appointmentList" class="appointment-list">
-    <p class="muted">Loading…</p>
-  </div>
-</section>
-
-<section class="card doctor-only" id="slotManager" hidden>
-  <h2>My availability</h2>
-  <p class="muted">Add time windows you are willing to see patients. Patients see and book these instantly.</p>
-
-  <form id="slotForm" class="slot-form">
-    <div class="slot-form-fields">
-      <label for="slotStart">Start</label>
-      <input type="datetime-local" id="slotStart" required>
-      <label for="slotEnd">End</label>
-      <input type="datetime-local" id="slotEnd" required>
-      <button type="submit" class="btn btn-primary">Add slot</button>
+<div class="container">
+  <div class="dashboard-head">
+    <div>
+      <span class="eyebrow">Dashboard</span>
+      <h1 id="welcomeTitle">Dashboard</h1>
+      <p class="muted">Your appointments in one place — updates arrive live.</p>
     </div>
-    <p id="slotFormStatus" class="muted"></p>
-  </form>
-
-  <div id="mySlots" class="slot-grid">
-    <p class="muted">Loading your slots…</p>
+    <a class="btn btn-primary" href="{{ url_for('main.booking_page') }}">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      Book a new appointment
+    </a>
   </div>
-</section>
+
+  <section class="card">
+    <div class="bp-head" style="padding-left:0;padding-right:0;border-bottom:1px solid var(--border);">
+      <h2>My appointments</h2>
+    </div>
+    <div style="padding-top:1.1rem;">
+      <div id="appointmentList" class="appointment-list">
+        <p class="muted">Loading…</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card doctor-only" id="slotManager" hidden>
+    <div class="bp-head" style="padding-left:0;padding-right:0;">
+      <h2>My availability</h2>
+    </div>
+    <p class="muted">Add time windows you are willing to see patients. Patients see and book these instantly.</p>
+
+    <form id="slotForm" class="slot-form">
+      <div class="slot-form-fields">
+        <div>
+          <label for="slotStart">Start</label>
+          <input type="datetime-local" id="slotStart" required>
+        </div>
+        <div>
+          <label for="slotEnd">End</label>
+          <input type="datetime-local" id="slotEnd" required>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+          Add slot
+        </button>
+      </div>
+      <p id="slotFormStatus" class="muted" style="margin-top:0.7rem;"></p>
+    </form>
+
+    <div id="mySlots" class="slot-grid">
+      <p class="muted">Loading your slots…</p>
+    </div>
+  </section>
+</div>
 {% endblock %}
 
 {% block scripts %}

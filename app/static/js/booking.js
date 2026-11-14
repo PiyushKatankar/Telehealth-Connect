@@ -37,13 +37,13 @@ async function loadDoctors() {
     return;
   }
   const cards = data.doctors.map((d) => {
-    const card = el("button", "card doctor-item");
+    const card = el("button", "doctor-item");
     card.type = "button";
-    card.append(
-      el("strong", null, d.full_name),
-      el("span", "badge badge-specialty", d.specialty),
-      el("span", "muted", ` ${d.open_slots} open slot${d.open_slots === 1 ? "" : "s"}`),
-    );
+    card.append(avatarFor(d.full_name, "avatar-sm"));
+    const info = el("div", "d-info");
+    info.append(el("div", "d-name", d.full_name), el("div", "d-spec", d.specialty));
+    card.append(info);
+    card.append(el("span", "d-count", `${d.open_slots} open`));
     card.addEventListener("click", () => selectDoctor(d.id, card));
     return card;
   });
@@ -76,11 +76,11 @@ async function loadSlots() {
 
 function renderSlots() {
   if (!selectedDoctor) {
-    slotArea.replaceChildren(el("p", "muted", "Select a doctor to see their availability."));
+    slotArea.replaceChildren(emptyState("Select a doctor to see their availability.", { compact: true }));
     return;
   }
   if (!openSlots.size) {
-    slotArea.replaceChildren(el("p", "muted", "No open slots for this doctor right now."));
+    slotArea.replaceChildren(emptyState("No open slots for this doctor right now.", { compact: true }));
     bookBtn.disabled = true;
     return;
   }
@@ -138,7 +138,7 @@ bookBtn.addEventListener("click", async () => {
   if (ok) {
     const a = data.appointment;
     document.getElementById("bookingResultText").textContent =
-      `Your appointment with Dr. ${a.doctor.full_name} is confirmed for ${formatSlot(a.slot)}.`;
+      `Your appointment with ${doctorLabel(a.doctor.full_name)} is confirmed for ${formatSlot(a.slot)}.`;
     document.getElementById("chatLink").href = `/chat/${a.id}`;
     resultBox.hidden = false;
     openSlots.delete(selectedSlot.id);

@@ -5,20 +5,28 @@
   const list = document.getElementById("doctorList");
   const { ok, data } = await api("/api/doctors");
   if (!ok) {
-    list.replaceChildren(el("p", "muted", "Could not load doctors."));
+    list.replaceChildren(emptyState("Could not load doctors.", { icon: "users" }));
     return;
   }
   if (!data.doctors.length) {
-    list.replaceChildren(el("p", "muted", "No doctors have signed up yet. Register as a doctor to add availability."));
+    list.replaceChildren(
+      emptyState("No doctors have signed up yet. Register as a doctor to add availability.", { icon: "users" }),
+    );
     return;
   }
 
   const cards = data.doctors.map((d) => {
     const card = el("article", "card doctor-card");
+
     const head = el("div", "doctor-card-head");
-    head.append(el("h3", null, d.full_name), el("span", "badge badge-specialty", d.specialty));
-    card.append(head, el("p", "muted", d.bio || "No bio yet."));
-    const meta = el("p", "doctor-card-meta");
+    head.append(avatarFor(d.full_name));
+    const info = el("div", "d-info");
+    info.append(el("h3", null, d.full_name), el("span", "d-spec", d.specialty));
+    head.append(info);
+
+    card.append(head, el("p", "d-bio", d.bio || "No bio yet."));
+
+    const meta = el("div", "doctor-card-meta");
     meta.append(el("span", "badge badge-open", `${d.open_slots} open slot${d.open_slots === 1 ? "" : "s"}`));
     const book = el("a", "btn btn-primary btn-sm", "Book");
     book.href = "/booking";

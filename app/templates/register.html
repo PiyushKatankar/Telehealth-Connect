@@ -2,46 +2,76 @@
 {% block title %}Sign up — TeleHealth Connect{% endblock %}
 
 {% block content %}
-<div class="auth-card card">
-  <h2>Create your account</h2>
-  <form id="registerForm" novalidate>
-    <label>I am a…</label>
-    <div class="role-toggle">
-      <label class="radio-pill">
-        <input type="radio" name="role" value="patient" checked>
-        <span>Patient</span>
-      </label>
-      <label class="radio-pill">
-        <input type="radio" name="role" value="doctor">
-        <span>Doctor</span>
-      </label>
+<div class="container">
+  <div class="auth-shell">
+    <div class="auth-side">
+      <a class="brand" href="{{ url_for('main.index') }}">
+        <span class="brand-logo" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg>
+        </span>
+        TeleHealth&nbsp;Connect
+      </a>
+      <h2>Create your account.</h2>
+      <p>Two roles, one platform: patients book care, doctors publish availability.</p>
+      <ul>
+        <li>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Patients — pick any open slot and chat with your doctor
+        </li>
+        <li>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Doctors — add availability windows, receive bookings live
+        </li>
+        <li>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Free demo account — no credit card, no real clinical use
+        </li>
+      </ul>
     </div>
 
-    <label for="fullName">Full name</label>
-    <input type="text" id="fullName" name="full_name" required maxlength="120"
-           placeholder="Jane Doe">
+    <div class="auth-main">
+      <h2>Create your account</h2>
+      <p class="auth-sub">It takes less than a minute.</p>
+      <form id="registerForm" novalidate>
+        <label>I am a…</label>
+        <div class="role-toggle">
+          <label class="radio-pill">
+            <input type="radio" name="role" value="patient" checked>
+            <span>Patient</span>
+          </label>
+          <label class="radio-pill">
+            <input type="radio" name="role" value="doctor">
+            <span>Doctor</span>
+          </label>
+        </div>
 
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required autocomplete="email"
-           placeholder="jane@example.com">
+        <label for="fullName">Full name</label>
+        <input type="text" id="fullName" name="full_name" required maxlength="120"
+               placeholder="Jane Doe">
 
-    <label for="password">Password <span class="muted">(min 8 characters)</span></label>
-    <input type="password" id="password" name="password" required minlength="8"
-           autocomplete="new-password" placeholder="••••••••">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required autocomplete="email"
+               placeholder="jane@example.com">
 
-    <div id="doctorFields" hidden>
-      <label for="specialty">Specialty <span class="muted">(doctors)</span></label>
-      <input type="text" id="specialty" name="specialty" maxlength="120"
-             placeholder="e.g. Cardiology">
-      <label for="bio">Short bio</label>
-      <textarea id="bio" name="bio" rows="3" maxlength="600"
-                placeholder="Tell patients about your practice"></textarea>
+        <label for="password">Password <span class="lbl-muted">(min 8 characters)</span></label>
+        <input type="password" id="password" name="password" required minlength="8"
+               autocomplete="new-password" placeholder="••••••••">
+
+        <div id="doctorFields" hidden>
+          <label for="specialty">Specialty <span class="lbl-muted">(doctors)</span></label>
+          <input type="text" id="specialty" name="specialty" maxlength="120"
+                 placeholder="e.g. Cardiology">
+          <label for="bio">Short bio</label>
+          <textarea id="bio" name="bio" rows="3" maxlength="600"
+                    placeholder="Tell patients about your practice"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Create account</button>
+        <p id="registerError" class="form-error" hidden></p>
+        <p class="form-hint">Already registered? <a href="{{ url_for('auth.login_page') }}">Log in</a></p>
+      </form>
     </div>
-
-    <button type="submit" class="btn btn-primary btn-block">Create account</button>
-    <p id="registerError" class="form-error" hidden></p>
-    <p class="form-hint">Already registered? <a href="{{ url_for('auth.login_page') }}">Log in</a></p>
-  </form>
+  </div>
 </div>
 {% endblock %}
 

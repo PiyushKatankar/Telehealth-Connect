@@ -3,34 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d8a78">
   <title>{% block title %}TeleHealth Connect{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127973;</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%230d8a78'/><path d='M50 24v52M24 50h52' stroke='white' stroke-width='14' stroke-linecap='round'/></svg>">
 </head>
 <body {% block body_attrs %}{% endblock %}>
   <nav class="nav">
-    <a class="brand" href="{{ url_for('main.index') }}">
-      <span class="brand-mark">+</span> TeleHealth&nbsp;Connect
-    </a>
-    <div class="nav-links">
-      <a href="{{ url_for('main.booking_page') }}">Book a doctor</a>
-      {% if current_user.is_authenticated %}
-        <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
-        <span class="nav-user">{{ current_user.full_name }} ({{ current_user.role }})</span>
-        <button id="logoutBtn" class="btn btn-ghost btn-sm">Log out</button>
-      {% else %}
-        <a href="{{ url_for('auth.login_page') }}">Log in</a>
-        <a class="btn btn-primary btn-sm" href="{{ url_for('auth.register_page') }}">Sign up</a>
-      {% endif %}
+    <div class="nav-inner">
+      <a class="brand" href="{{ url_for('main.index') }}">
+        <span class="brand-logo" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg>
+        </span>
+        TeleHealth&nbsp;Connect
+      </a>
+      <button class="nav-burger" id="navBurger" aria-label="Toggle menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="nav-links" id="navLinks">
+        <a href="{{ url_for('main.booking_page') }}" class="{{ 'active' if request.path == '/booking' else '' }}">Find a doctor</a>
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('main.dashboard') }}" class="{{ 'active' if request.path == '/dashboard' else '' }}">Dashboard</a>
+          <span class="nav-user">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.8-3.2 4.6-5 8-5s6.2 1.8 8 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            {{ current_user.full_name }}&nbsp;<span class="muted">· {{ current_user.role }}</span>
+          </span>
+          <button id="logoutBtn" class="btn btn-ghost btn-sm">Log out</button>
+        {% else %}
+          <a href="{{ url_for('auth.login_page') }}" class="{{ 'active' if request.path == '/login' else '' }}">Log in</a>
+          <a class="btn btn-primary btn-sm" href="{{ url_for('auth.register_page') }}">Sign up free</a>
+        {% endif %}
+      </div>
     </div>
   </nav>
 
-  <main class="container">
+  <main>
     {% block content %}{% endblock %}
   </main>
 
   <footer class="footer">
-    <p>TeleHealth Connect — demo project · Flask + PostgreSQL + Socket.IO · not for real clinical use</p>
+    <div class="footer-inner">
+      <div>
+        <a class="brand" href="{{ url_for('main.index') }}">
+          <span class="brand-logo" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg>
+          </span>
+          TeleHealth&nbsp;Connect
+        </a>
+        <p>Real-time doctor appointments: live availability, transaction-safe booking and private symptom chat — built with Flask, PostgreSQL and Socket.IO.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <a href="{{ url_for('main.booking_page') }}">Find a doctor</a>
+        <a href="{{ url_for('auth.register_page') }}">Create an account</a>
+        <a href="{{ url_for('auth.login_page') }}">Log in</a>
+      </div>
+      <div>
+        <h4>Under the hood</h4>
+        <a href="/api/doctors">REST API · /api/doctors</a>
+        <a href="/healthz">Health check · /healthz</a>
+        <a href="https://flask-socketio.readthedocs.io/" target="_blank" rel="noopener">Socket.IO docs</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© TeleHealth Connect — demo project</span>
+      <span>Not for real clinical use.</span>
+    </div>
   </footer>
 
   <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>

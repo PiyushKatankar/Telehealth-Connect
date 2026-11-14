@@ -4,25 +4,38 @@
 {% block body_attrs %}data-appointment-id="{{ appointment.id }}"{% endblock %}
 
 {% block content %}
-<div class="chat-head">
-  <div>
-    <h1>Appointment chat</h1>
-    <p class="muted" id="chatSubtitle">
-      {{ appointment.patient.full_name }} ↔ Dr.-side: {{ appointment.doctor.full_name }}
-      · slot {{ appointment.slot.start_time.isoformat() if appointment.slot else "—" }} UTC
-    </p>
+<div class="container">
+  {% set other = appointment.doctor if current_user.role == 'patient' else appointment.patient %}
+  <div class="chat-head">
+    <div style="display:flex;align-items:center;gap:0.9rem;">
+      <span class="avatar avatar-lg av-1">{{ (other.full_name or "?")[:1] }}</span>
+      <div>
+        <h1>Appointment chat</h1>
+        <p class="muted" id="chatSubtitle">
+          {{ appointment.patient.full_name }} ↔ {{ appointment.doctor.full_name }}
+          · slot {{ appointment.slot.start_time.strftime('%a, %b %d at %H:%M') if appointment.slot else "—" }} UTC
+        </p>
+      </div>
+    </div>
+    <span id="appointmentStatus" class="badge badge-{{ appointment.status }}">{{ appointment.status }}</span>
   </div>
-  <span id="appointmentStatus" class="badge">{{ appointment.status }}</span>
-</div>
 
-<div class="card chat-card">
-  <div id="messages" class="messages" aria-live="polite"></div>
-  <form id="chatForm" class="chat-form">
-    <input type="text" id="chatInput" maxlength="2000" autocomplete="off"
-           placeholder="Describe your symptoms or ask a question…">
-    <button type="submit" class="btn btn-primary">Send</button>
-  </form>
-  <p id="chatNotice" class="muted"></p>
+  <div class="card chat-card">
+    <div class="chat-window" aria-live="polite">
+      <div id="messages" class="messages"></div>
+    </div>
+    <div class="chat-composer">
+      <form id="chatForm" class="chat-form">
+        <input type="text" id="chatInput" maxlength="2000" autocomplete="off"
+               placeholder="Describe your symptoms or ask a question…">
+        <button type="submit" class="btn btn-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 12 20 4l-3 8 3 8-16-8z" fill="currentColor"/></svg>
+          Send
+        </button>
+      </form>
+      <p id="chatNotice" class="chat-notice"></p>
+    </div>
+  </div>
 </div>
 {% endblock %}
 

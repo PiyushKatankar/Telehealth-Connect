@@ -2,45 +2,185 @@
 {% block title %}TeleHealth Connect — book doctors, in real time{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <h1>Book a doctor, <span class="accent">in real time</span>.</h1>
-  <p class="hero-sub">
-    Live appointment availability, transaction-safe booking (no double-booking,
-    ever) and a symptom chat with your doctor the moment your slot is confirmed.
-  </p>
-  <div class="hero-actions">
-    <a class="btn btn-primary btn-lg" href="{{ url_for('main.booking_page') }}">Find a doctor</a>
-    {% if not current_user.is_authenticated %}
-      <a class="btn btn-ghost btn-lg" href="{{ url_for('auth.register_page') }}">Create an account</a>
-    {% endif %}
-  </div>
-</section>
+<!-- ============================== HERO ============================== -->
+<div class="hero-wrap">
+  <section class="hero">
+    <div>
+      <span class="pill">
+        <span class="dot">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" fill="currentColor"/></svg>
+        </span>
+        Live availability over WebSocket
+      </span>
+      <h1>Book a doctor, <span class="accent-text">in real time</span>.</h1>
+      <p class="hero-sub">
+        Live appointment availability, transaction-safe booking — no double-booking,
+        ever — and a private symptom chat with your doctor the moment your slot is
+        confirmed.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('main.booking_page') }}">
+          Find a doctor
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        {% if not current_user.is_authenticated %}
+          <a class="btn btn-ghost btn-lg" href="{{ url_for('auth.register_page') }}">Create an account</a>
+        {% endif %}
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">0</div>
+          <div class="stat-label">double-bookings — enforced by row locks + DB constraints</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">&lt;1s</div>
+          <div class="stat-label">for calendars to update everywhere, no refresh</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">2 roles</div>
+          <div class="stat-label">patients book, doctors publish availability</div>
+        </div>
+      </div>
+    </div>
 
-<section class="features">
-  <article class="card feature">
-    <h3>Live slot availability</h3>
-    <p>Slots update over WebSocket the instant someone books — no refresh, no stale calendars, no race conditions.</p>
-  </article>
-  <article class="card feature">
-    <h3>Transaction-safe booking</h3>
-    <p>Bookings run inside a SQL transaction with row-level locking plus a database constraint, so a slot can only ever be claimed once.</p>
-  </article>
-  <article class="card feature">
-    <h3>Symptom chat</h3>
-    <p>After booking, chat directly with the doctor in a private room so symptoms are documented before the visit starts.</p>
-  </article>
-  <article class="card feature">
-    <h3>Role-based access</h3>
-    <p>Patients book and message; doctors publish availability and manage their schedule. Permissions are enforced server-side.</p>
-  </article>
-</section>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="mock">
+        <div class="mock-bar">
+          <i></i><i></i><i></i>
+          <span class="mock-url">telehealth-connect.app/booking</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-doc">
+            <span class="avatar avatar-sm av-0">AO</span>
+            <div>
+              <div class="m-name">Dr. Amara Okafor</div>
+              <div class="m-spec">Cardiology</div>
+            </div>
+            <span class="m-live">Live</span>
+          </div>
+          <div class="mock-slots">
+            <span class="mock-slot is-sel">09:00</span>
+            <span class="mock-slot is-off">09:30</span>
+            <span class="mock-slot">10:00</span>
+            <span class="mock-slot">10:30</span>
+            <span class="mock-slot">11:00</span>
+          </div>
+          <div class="mock-confirm">
+            <span class="tick">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            Appointment confirmed — Thu, Nov 20 · 09:00–09:30
+          </div>
+        </div>
+      </div>
+      <span class="float-chip fc-1">
+        <span class="ic">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4v5c0 5-3.4 8.4-8 9-4.6-.6-8-4-8-9V7l8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        Row lock + unique constraint
+      </span>
+      <span class="float-chip fc-2">
+        <span class="ic">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 5h16v10H8l-4 4V5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 9h8M8 12h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>
+        Symptom chat, instantly
+      </span>
+    </div>
+  </section>
+</div>
 
-<section class="card doctors-panel">
-  <h2>Our doctors</h2>
-  <div id="doctorList" class="doctor-grid">
-    <p class="muted">Loading doctors…</p>
-  </div>
-</section>
+<div class="container">
+  <!-- ============================ FEATURES ============================ -->
+  <section class="section">
+    <div class="section-head">
+      <span class="eyebrow">Why TeleHealth Connect</span>
+      <h2>Everything a real clinic needs to schedule</h2>
+      <p>Not a mock-up: every feature below runs on the live Flask backend you can explore in this repo.</p>
+    </div>
+    <div class="features">
+      <article class="card feature">
+        <span class="f-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </span>
+        <h3>Live slot availability</h3>
+        <p>Slots update over WebSocket the instant someone books — no refresh, no stale calendars, no race conditions.</p>
+      </article>
+      <article class="card feature">
+        <span class="f-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4v5c0 5-3.4 8.4-8 9-4.6-.6-8-4-8-9V7l8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <h3>Transaction-safe booking</h3>
+        <p>Bookings run inside a SQL transaction with row-level locking plus a database constraint, so a slot can only ever be claimed once.</p>
+      </article>
+      <article class="card feature">
+        <span class="f-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 5h16v10H8l-4 4V5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 9h8M8 12h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>
+        <h3>Symptom chat</h3>
+        <p>After booking, chat directly with the doctor in a private room so symptoms are documented before the visit starts.</p>
+      </article>
+      <article class="card feature">
+        <span class="f-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M2.5 19c1.4-2.9 3.7-4.5 6.5-4.5s5.1 1.6 6.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="17" cy="9" r="2.5" stroke="currentColor" stroke-width="2"/><path d="M16 14.7c2.4.2 4.2 1.5 5.3 3.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>
+        <h3>Role-based access</h3>
+        <p>Patients book and message; doctors publish availability and manage their schedule. Permissions are enforced server-side.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============================== STEPS ============================= -->
+  <section class="section">
+    <div class="section-head">
+      <span class="eyebrow">How it works</span>
+      <h2>From “I need a doctor” to confirmed — in three steps</h2>
+    </div>
+    <div class="steps">
+      <article class="card step">
+        <span class="step-num">1</span>
+        <h3>Create your free account</h3>
+        <p>Sign up as a patient in seconds — or as a doctor, if you want to publish availability and receive patients.</p>
+      </article>
+      <article class="card step">
+        <span class="step-num">2</span>
+        <h3>Pick any open slot</h3>
+        <p>Choose a doctor and a time from their live calendar. If someone grabs a slot while you are choosing, it disappears instantly.</p>
+      </article>
+      <article class="card step">
+        <span class="step-num">3</span>
+        <h3>Chat before your visit</h3>
+        <p>Your booking opens a private chat with the doctor, so symptoms and questions are ready before the appointment starts.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============================ DOCTORS ============================= -->
+  <section class="section">
+    <div class="card doctors-panel">
+      <div class="doctors-head">
+        <h2>Our doctors</h2>
+        <span class="live-note">Availability shown live</span>
+      </div>
+      <div id="doctorList" class="doctor-grid">
+        <p class="muted">Loading doctors…</p>
+      </div>
+    </div>
+
+    <!-- ============================== CTA ============================= -->
+    <div class="cta-band">
+      <div>
+        <h2>Ready when you are.</h2>
+        <p>Create a free account and book your first appointment — or register as a doctor and publish your availability in minutes.</p>
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn-white btn-lg" href="{{ url_for('main.booking_page') }}">Find a doctor</a>
+        {% if not current_user.is_authenticated %}
+          <a class="btn btn-ghost btn-lg" href="{{ url_for('auth.register_page') }}">Sign up</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+</div>
 {% endblock %}
 
 {% block scripts %}

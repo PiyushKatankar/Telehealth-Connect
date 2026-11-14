@@ -16,7 +16,7 @@ async function init() {
   me = data.user;
 
   document.getElementById("welcomeTitle").textContent =
-    me.role === "doctor" ? `Dr. ${me.full_name}` : `Welcome, ${me.full_name}`;
+    me.role === "doctor" ? doctorLabel(me.full_name) : `Welcome, ${me.full_name}`;
 
   if (me.role === "doctor") {
     slotManager.hidden = false;
@@ -40,20 +40,36 @@ async function loadAppointments() {
   }
   if (!data.appointments.length) {
     appointmentList.replaceChildren(
-      el("p", "muted", "No appointments yet. Use “Book a new appointment” to get started."),
+      emptyState("No appointments yet. Use “Book a new appointment” to get started."),
     );
     return;
   }
 
+  const CAL_ICON =
+    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+  const NOTE_ICON =
+    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 4h14v16l-3-2-3 2-3-2-3 2V4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 9h6M9 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
   const cards = data.appointments.map((a) => {
     const card = el("article", "card appointment-card");
+
     const head = el("div", "appointment-head");
-    head.append(
-      el("strong", null, me.role === "doctor" ? `Patient: ${a.patient.full_name}` : `Dr. ${a.doctor.full_name}`),
-      el("span", `badge badge-${a.status}`, a.status),
-    );
-    card.append(head, el("p", null, a.slot ? formatSlot(a.slot) : "—"));
-    if (a.symptoms) card.append(el("p", "muted", `Symptoms: ${a.symptoms}`));
+    const otherName = me.role === "doctor" ? a.patient.full_name : doctorLabel(a.doctor.full_name);
+    head.append(avatarFor(otherName, "avatar-sm"));
+    head.append(el("span", "a-name", otherName));
+    head.append(el("span", `badge badge-${a.status}`, a.status));
+
+    const meta = el("div", "appointment-meta");
+    const when = el("span", "a-line");
+    when.append(iconEl(CAL_ICON), el("span", null, a.slot ? formatSlot(a.slot) : "No slot attached"));
+    meta.append(when);
+    if (a.symptoms) {
+      const note = el("span", "a-line a-note");
+      note.append(iconEl(NOTE_ICON), el("span", null, `Symptoms: ${a.symptoms}`));
+      meta.append(note);
+    }
+
+    card.append(head, meta);
 
     const actions = el("div", "appointment-actions");
     if (a.status === "scheduled") {
@@ -61,7 +77,7 @@ async function loadAppointments() {
       chat.href = `/chat/${a.id}`;
       actions.append(chat);
 
-      const cancel = el("button", "btn btn-ghost btn-sm", "Cancel");
+      const cancel = el("button", "btn btn-danger btn-sm", "Cancel");
       cancel.type = "button";
       cancel.addEventListener("click", async () => {
         if (!window.confirm("Cancel this appointment?")) return;
@@ -110,11 +126,11 @@ async function loadMySlots() {
   const box = document.getElementById("mySlots");
   const { ok, data } = await api(`/api/doctors/${me.id}/slots`);
   if (!ok) {
-    box.replaceChildren(el("p", "muted", "Could not load your slots."));
+    box.replaceChildren(emptyState("Could not load your slots.", { compact: true }));
     return;
   }
   if (!data.slots.length) {
-    box.replaceChildren(el("p", "muted", "No open slots yet — add one above."));
+    box.replaceChildren(emptyState("No open slots yet — add one above.", { compact: true }));
     return;
   }
   const chips = data.slots.map((s) => {
